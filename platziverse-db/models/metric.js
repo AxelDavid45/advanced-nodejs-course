@@ -6,7 +6,7 @@ const setupDatabase = require('../lib/db')
 module.exports = function setupAgentModel (config) {
   const sequelize = setupDatabase(config)
 
-  return sequelize.define('agent', {
+  return sequelize.define('metric', {
     type: {
       type: Sequelize.STRING,
       allowNull: false

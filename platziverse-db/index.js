@@ -3,6 +3,11 @@ const setupDatabase = require('./lib/db')
 const setupAgentModel = require('./models/agent')
 const setupMetricModel = require('./models/metric')
 
+/**
+ * Configures the models, relationships and more
+ * @type {{database: (string|string), password: (string|string), dialect: string, host: (string|string), logging: (function(*=): *), setup: boolean, username: (string|string)}}
+ * @returns {Promise<{Agent: {}, Metric: {}}>}
+ */
 module.exports = async function (config) {
   /**
    * In this part, we're configuring the models and creating the connection to the db,
@@ -26,6 +31,14 @@ module.exports = async function (config) {
    * not connected, the code will throw an error, and the implementation will have to handle it.
    */
   await sequelize.authenticate()
+
+  /**
+   * If exists in the config object the property setup set to true, start the process of
+   * migration the tables.
+   */
+  if (config.setup) {
+    await sequelize.sync({ force: true })
+  }
 
   const Agent = {}
   const Metric = {}

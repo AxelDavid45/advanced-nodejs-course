@@ -4,11 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "setup": "DEBUG=platziverse:db:setup node setup.js"
   },
   "author": "Axel Espinosa",
   "license": "MIT",
   "devDependencies": {
+    "debug": "^4.1.1",
     "eslint": "^7.7.0",
     "eslint-config-standard": "^14.1.1",
     "eslint-plugin-import": "^2.22.0",
