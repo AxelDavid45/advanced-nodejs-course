@@ -7,11 +7,11 @@ module.exports = function setupAgentModel (config) {
   const sequelize = setupDatabase(config)
 
   return sequelize.define('agent', {
-    agentId: {
-      type: Sequelize.INTEGER,
+    type: {
+      type: Sequelize.STRING,
       allowNull: false
     },
-    type: {
+    value: {
       type: Sequelize.TEXT,
       allowNull: false
     }
