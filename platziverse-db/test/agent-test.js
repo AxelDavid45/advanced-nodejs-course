@@ -34,9 +34,14 @@ const single = Object.assign({}, agentFixtures.single)
 describe('Agent service', function () {
   beforeEach(async function () {
     sandBox = sinon.createSandbox()
+    // Create the stub of the model
     AgentStub = {
-      hasMany: sandBox.spy()
+      hasMany: sandBox.spy(),
     }
+    // Set up the function to filter by id
+    AgentStub.findById = sandBox.stub()
+    AgentStub.findById.withArgs(id).returns(Promise.resolve(agentFixtures.byId(id)))
+
     // Replace the original models with the stubs
     const setupDatabase = proxyquire('../', {
       './models/agent': () => AgentStub,
@@ -53,10 +58,10 @@ describe('Agent service', function () {
   it('should exist agent in the api', function () {
     expect(db).to.have.a.property('Agent')
   })
+
   it('should call the stub methods', function () {
     expect(AgentStub.hasMany.called).to.be.equal(true)
     expect(MetricStub.belongsTo.called).to.be.equal(true)
-
   })
 
   it('should call the stub method with the stub objects', function () {
@@ -65,7 +70,7 @@ describe('Agent service', function () {
   })
 
   it('Agent#FilterById should return the same data', async function () {
-    const agent = db.Agent.filterById(id)
+    const agent = await db.Agent.filterById(id)
     expect(agent).to.be.deep.equal(agentFixtures.byId(id))
   })
 })
