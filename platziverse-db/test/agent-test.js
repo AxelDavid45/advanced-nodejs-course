@@ -2,8 +2,11 @@
 const { expect } = require('chai')
 const proxyquire = require('proxyquire')
 const sinon = require('sinon')
+const agentFixtures = require('./fixtures/agent')
 
 let db = null
+const id = 1
+// Test db configurations
 const config = {
   dialect: 'sqlite',
   pool: {
@@ -24,6 +27,10 @@ const MetricStub = {
 // Create the stubs for the AgentModel, every time we run a new test we need a new stub
 let AgentStub = null
 let sandBox = null
+
+// Create a copy of the single fixture
+const single = Object.assign({}, agentFixtures.single)
+
 describe('Agent service', function () {
   beforeEach(async function () {
     sandBox = sinon.createSandbox()
@@ -55,5 +62,10 @@ describe('Agent service', function () {
   it('should call the stub method with the stub objects', function () {
     expect(MetricStub.belongsTo.calledWith(AgentStub)).to.be.equal(true)
     expect(AgentStub.hasMany.calledWith(MetricStub)).to.be.equal(true)
+  })
+
+  it('Agent#FilterById should return the same data', async function () {
+    const agent = db.Agent.filterById(id)
+    expect(agent).to.be.deep.equal(agentFixtures.byId(id))
   })
 })
