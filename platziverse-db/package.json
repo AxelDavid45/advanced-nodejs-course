@@ -4,21 +4,28 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "setup": "DEBUG=platziverse:db:setup node setup.js"
+    "setup": "DEBUG=platziverse:db:setup node setup.js",
+    "test": "DEBUG=platziverse:* mocha --recursive",
+    "coverage": "nyc npm run test"
   },
   "author": "Axel Espinosa",
   "license": "MIT",
   "devDependencies": {
+    "chai": "^4.2.0",
     "debug": "^4.1.1",
     "eslint": "^7.7.0",
     "eslint-config-standard": "^14.1.1",
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-standard": "^4.0.1"
+    "eslint-plugin-standard": "^4.0.1",
+    "mocha": "^8.1.1",
+    "nyc": "^15.1.0"
   },
   "dependencies": {
+    "inquirer": "^7.3.3",
     "mysql2": "^2.1.0",
-    "sequelize": "^6.3.4"
+    "sequelize": "^6.3.4",
+    "sqlite3": "^5.0.0"
   }
 }

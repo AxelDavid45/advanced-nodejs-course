@@ -5,7 +5,7 @@ const setupMetricModel = require('./models/metric')
 
 /**
  * Configures the models, relationships and more
- * @type {{database: (string|string), password: (string|string), dialect: string, host: (string|string), logging: (function(*=): *), setup: boolean, username: (string|string)}}
+ * @type {Object}
  * @returns {Promise<{Agent: {}, Metric: {}}>}
  */
 module.exports = async function (config) {

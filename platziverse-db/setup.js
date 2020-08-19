@@ -1,8 +1,17 @@
 'use strict'
 const db = require('./')
+const inquirer = require('inquirer')
 const debug = require('debug')('platziverse:db:setup')
 
 async function setup () {
+  const answer = await inquirer.prompt([{
+    type: 'confirm',
+    name: 'setup',
+    message: 'This will overwrite the database and destroy your data, are you sure?'
+  }])
+  if (!answer.setup) {
+    return console.log('Ok, everything is all right')
+  }
   /**
    * Creates the config object to start the configuration process.
    */
