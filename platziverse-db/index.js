@@ -3,7 +3,7 @@ const setupDatabase = require('./lib/db')
 const setupAgentModel = require('./models/agent')
 const setupMetricModel = require('./models/metric')
 const setupAgentService = require('./lib/agent')
-const setupAgentService = require('./lib/metric')
+const setupMetricService = require('./lib/metric')
 /**
  * Configures the models, relationships and more
  * @type {Object}

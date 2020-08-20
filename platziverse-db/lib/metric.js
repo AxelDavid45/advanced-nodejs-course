@@ -34,7 +34,7 @@ module.exports = function setupMetric (MetricModel, AgentModel) {
   }
 
   async function findByTypeAgentUuid (type, uuid) {
-    return MetricModel.findOne({
+    return MetricModel.findAll({
       attributes: ['id', 'type', 'value', 'createdAt'],
       where: {
         type
