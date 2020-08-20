@@ -6,7 +6,8 @@
   "scripts": {
     "setup": "DEBUG=platziverse:db:setup node setup.js",
     "test": "DEBUG=platziverse:* mocha --full-trace true --color true",
-    "coverage": "nyc npm run test"
+    "coverage": "nyc report npm run test",
+    "coverage:report": "nyc report"
   },
   "author": "Axel Espinosa",
   "license": "MIT",

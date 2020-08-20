@@ -7,14 +7,14 @@ module.exports = function setupAgent (AgentModel) {
       }
     }
 
-    const existsAgent = AgentModel.findOne(filter)
+    const existsAgent = await AgentModel.findOne(filter)
 
     if (existsAgent) {
-      const updated = AgentModel.update(agent, filter)
-      return updated ? AgentModel.findOne(filter) : existsAgent
+      const updated = await AgentModel.update(agent, filter)
+      return updated ? await AgentModel.findOne(filter) : existsAgent
     }
 
-    const result = AgentModel.create(agent)
+    const result = await AgentModel.create(agent)
     return result.toJSON()
   }
 
@@ -22,8 +22,41 @@ module.exports = function setupAgent (AgentModel) {
     return AgentModel.findById(id)
   }
 
+  function findAll () {
+    return AgentModel.findAll()
+  }
+
+  function findByUuid (uuid) {
+    return AgentModel.findOne({
+      where: {
+        uuid
+      }
+    })
+  }
+
+  function findConnected () {
+    return AgentModel.findAll({
+      where: {
+        connected: true
+      }
+    })
+  }
+
+  function findByUsername (username) {
+    return AgentModel.findOne({
+      where: {
+        username,
+        connected: true
+      }
+    })
+  }
+
   return {
     filterById,
-    createOrUpdate
+    createOrUpdate,
+    findAll,
+    findByUsername,
+    findByUuid,
+    findConnected
   }
 }

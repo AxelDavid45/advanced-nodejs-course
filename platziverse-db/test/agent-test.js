@@ -37,6 +37,9 @@ const uuidFilter = {
     uuid
   }
 }
+// Create the mock for the new agent with different uuid
+const newAgent = Object.assign({}, single)
+newAgent.uuid = 'xpx-xpx-xpx'
 
 describe('Agent service', function () {
   beforeEach(async function () {
@@ -53,11 +56,21 @@ describe('Agent service', function () {
 
     // Create the stub in the model for the function findOne
     AgentModelStub.findOne = sandBox.stub()
-    AgentModelStub.findOne.withArgs(uuidFilter).returns(Promise.resolve(single))
+    AgentModelStub.findOne.withArgs(uuidFilter).returns(Promise.resolve(agentFixtures.byUuid(uuid)))
 
     // Create the update stub function in the model
     AgentModelStub.update = sandBox.stub()
     AgentModelStub.update.withArgs(single, uuidFilter).returns(Promise.resolve(single))
+
+    // Create the create stub function in the model
+    AgentModelStub.create = sandBox.stub()
+    AgentModelStub.create.withArgs(newAgent).returns(Promise.resolve({
+      toJSON: () => newAgent
+    }))
+
+    // Creating the findAll stub function in the model
+    AgentModelStub.findAll = sandBox.stub()
+    AgentModelStub.findAll.withArgs().returns(Promise.resolve(agentFixtures.all))
 
     // Replace the original models with the stubs
     const setupDatabase = proxyquire('../', {
@@ -104,5 +117,20 @@ describe('Agent service', function () {
       .equal(true, 'Should call the function with the single agent fixture')
 
     expect(create).deep.equal(single, 'Should be the same data')
+  })
+
+  it('Agent#createOrUpdate - create one', async function () {
+    const create = await db.Agent.createOrUpdate(newAgent)
+    expect(AgentModelStub.findOne.calledOnce).equal(true, 'Should only call once the function')
+    expect(AgentModelStub.findOne.calledWith({ where: { uuid: newAgent.uuid } }))
+      .equal(true, 'Should call the function with the uuid of the new Agent')
+    expect(create).deep.equal(newAgent, 'Should be the same data')
+  })
+
+  it('Agent#findAll should return all Agents', async function () {
+    const result = await db.Agent.findAll()
+    expect(AgentModelStub.findAll.calledOnce).equal(true, 'Should call once the function')
+    expect(AgentModelStub.findAll.calledWith()).equal(true)
+    expect(result).deep.equal(agentFixtures.all, 'Should return all the agents')
   })
 })
