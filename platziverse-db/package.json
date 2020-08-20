@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "setup": "DEBUG=platziverse:db:setup node setup.js",
-    "test": "DEBUG=platziverse:* mocha --verbose",
+    "test": "DEBUG=platziverse:* mocha --full-trace true --color true",
     "coverage": "nyc npm run test"
   },
   "author": "Axel Espinosa",
