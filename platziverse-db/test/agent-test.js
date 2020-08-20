@@ -42,6 +42,12 @@ const connectedFilter = {
     connected: true
   }
 }
+const username = 'platzi'
+const usernameFilter = {
+  where: {
+    username
+  }
+}
 
 // Create the mock for the new agent with different uuid
 const newAgent = Object.assign({}, single)
@@ -64,6 +70,7 @@ describe('Agent service', function () {
     AgentModelStub.findOne = sandBox.stub()
     AgentModelStub.findOne.withArgs(uuidFilter).returns(Promise.resolve(agentFixtures.byUuid(uuid)))
     AgentModelStub.findOne.withArgs(uuid).returns(Promise.resolve(agentFixtures.byUuid(uuid)))
+    AgentModelStub.findOne.withArgs(usernameFilter).returns(Promise.resolve(agentFixtures.platzi))
 
     // Create the update stub function in the model
     AgentModelStub.update = sandBox.stub()
@@ -161,5 +168,14 @@ describe('Agent service', function () {
     expect(AgentModelStub.findAll.calledWith(connectedFilter))
       .equal(true, 'Should call the function with the connected filter')
     expect(result).deep.equals(agentFixtures.connected)
+  })
+
+  it('Agent#findByUsername should return an agent', async function () {
+    const result = await db.Agent.findByUsername(username)
+    expect(AgentModelStub.findOne.calledOnce)
+      .equal(true, 'Should only call once the filter')
+    expect(AgentModelStub.findOne.calledWith(usernameFilter))
+      .equal(true, 'Should call the function with the predefine filter')
+    expect(result).deep.equals(agentFixtures.platzi)
   })
 })

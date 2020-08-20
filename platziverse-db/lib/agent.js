@@ -45,8 +45,7 @@ module.exports = function setupAgent (AgentModel) {
   function findByUsername (username) {
     return AgentModel.findOne({
       where: {
-        username,
-        connected: true
+        username
       }
     })
   }
