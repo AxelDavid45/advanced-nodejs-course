@@ -37,6 +37,12 @@ const uuidFilter = {
     uuid
   }
 }
+const connectedFilter = {
+  where: {
+    connected: true
+  }
+}
+
 // Create the mock for the new agent with different uuid
 const newAgent = Object.assign({}, single)
 newAgent.uuid = 'xpx-xpx-xpx'
@@ -57,6 +63,7 @@ describe('Agent service', function () {
     // Create the stub in the model for the function findOne
     AgentModelStub.findOne = sandBox.stub()
     AgentModelStub.findOne.withArgs(uuidFilter).returns(Promise.resolve(agentFixtures.byUuid(uuid)))
+    AgentModelStub.findOne.withArgs(uuid).returns(Promise.resolve(agentFixtures.byUuid(uuid)))
 
     // Create the update stub function in the model
     AgentModelStub.update = sandBox.stub()
@@ -71,6 +78,11 @@ describe('Agent service', function () {
     // Creating the findAll stub function in the model
     AgentModelStub.findAll = sandBox.stub()
     AgentModelStub.findAll.withArgs().returns(Promise.resolve(agentFixtures.all))
+    AgentModelStub.findAll.withArgs(connectedFilter).returns(Promise.resolve(agentFixtures.connected))
+
+    // Creating the findByUuid stub function in the model
+    AgentModelStub.findByUuid = sandBox.stub()
+    AgentModelStub.findByUuid.withArgs(uuid).returns(Promise.resolve(agentFixtures.byUuid(uuid)))
 
     // Replace the original models with the stubs
     const setupDatabase = proxyquire('../', {
@@ -131,6 +143,23 @@ describe('Agent service', function () {
     const result = await db.Agent.findAll()
     expect(AgentModelStub.findAll.calledOnce).equal(true, 'Should call once the function')
     expect(AgentModelStub.findAll.calledWith()).equal(true)
-    expect(result).deep.equal(agentFixtures.all, 'Should return all the agents')
+    expect(result).deep.equals(agentFixtures.all, 'Should return all the agents')
+  })
+
+  it('Agent#findByuui should return only an Agent', async function () {
+    const result = await db.Agent.findByUuid(uuid)
+    expect(AgentModelStub.findOne.calledOnce).equal(true, 'Should only call once the function')
+    expect(AgentModelStub.findOne.calledWith(uuidFilter))
+      .equal(true, 'Should call the function with the predefine uuid')
+    expect(result).deep.equals(agentFixtures.byUuid(uuid))
+  })
+
+  it('Agent#findConnected should response with the agents connected', async function () {
+    const result = await db.Agent.findConnected()
+    expect(AgentModelStub.findAll.calledOnce)
+      .equal(true, 'Should call the function once')
+    expect(AgentModelStub.findAll.calledWith(connectedFilter))
+      .equal(true, 'Should call the function with the connected filter')
+    expect(result).deep.equals(agentFixtures.connected)
   })
 })
