@@ -1,0 +1,22 @@
+{
+  "name": "platziverse-mqtt",
+  "version": "1.0.0",
+  "description": "## `agent/connected` ```js {   agent: {     uuid, // auto generated     username, // defined in configs     name, // defined in configs     hostname, // obtained from OS,     pid // obtained from process   } } ```",
+  "main": "index.js",
+  "scripts": {
+    "start": "DEBUG=production node server.js",
+    "dev": "DEBUG=platziverse:* nodemon server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  },
+  "dependencies": {
+    "aedes": "^0.42.5",
+    "debug": "^4.1.1",
+    "mqemitter-redis": "^4.0.3",
+    "redis": "^3.0.2"
+  }
+}
