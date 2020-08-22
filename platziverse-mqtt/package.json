@@ -17,6 +17,7 @@
     "aedes": "^0.42.5",
     "debug": "^4.1.1",
     "mqemitter-redis": "^4.0.3",
+    "platziverse-db": "file:../platziverse-db",
     "redis": "^3.0.2"
   }
 }

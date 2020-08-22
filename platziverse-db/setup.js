@@ -1,6 +1,7 @@
 'use strict'
 const db = require('./')
 const inquirer = require('inquirer')
+const configSetup = require('../config')
 const debug = require('debug')('platziverse:db:setup')
 
 async function setup () {
@@ -15,15 +16,7 @@ async function setup () {
   /**
    * Creates the config object to start the configuration process.
    */
-  const config = {
-    dialect: 'mysql',
-    database: process.env.DB_NAME || 'Fd4GTkakrw',
-    username: process.env.DB_USER || 'Fd4GTkakrw',
-    password: process.env.DB_PASS || '4QxYx7HOZU',
-    host: process.env.DB_HOST || 'remotemysql.com',
-    logging: query => debug(query),
-    setup: true
-  }
+  const config = configSetup(true, debug)
   /**
    * Waits until the configuration process ends, if there's an error, it will be captured
    */
