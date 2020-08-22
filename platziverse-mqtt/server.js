@@ -36,8 +36,29 @@ aedes.on('clientReady', (client) => {
   clients.set(client.id, null)
 })
 
-aedes.on('clientDisconnect', client => {
+aedes.on('clientDisconnect', async (client) => {
   debug(`Client with id ${client.id} disconnected`)
+  const agent = clients.get(client.id)
+  if (agent) {
+    agent.connected = false
+    try {
+      await AgentService.createOrUpdate(agent)
+    } catch (e) {
+      return handleError(e)
+    }
+    // Delete agent from client list
+    clients.delete(client.id)
+
+    aedes.publish({
+      topic: 'agent/disconnected',
+      payload: JSON.stringify({
+        agent: {
+          uuid: agent.uuid
+        }
+      })
+    })
+    debug(`Client (${client.id}) associated to Agent (${agent.uuid}) marked as disconnected`)
+  }
 })
 
 // Listen when the client publish something in the server
@@ -78,6 +99,17 @@ aedes.on('publish', async (packet, client) => {
               }
             })
           })
+        }
+
+        // Store metrics
+        for (let metric of payload.metrics) {
+          let m = null
+          try {
+            m = await MetricService.create(agent.uuid, metric)
+          } catch (e) {
+            return handleError(e)
+          }
+          debug(`Metric ${m.id} saved on agent ${agent.uuid}`)
         }
       }
       break
