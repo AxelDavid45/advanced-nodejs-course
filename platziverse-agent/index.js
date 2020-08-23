@@ -1,10 +1,11 @@
 'use strict'
-const EventEmitter = require('events')
 const debug = require('debug')('platziverse:agent')
-const mqtt = require('mqtt')
 const os = require('os')
-const uuid = require('uuid')
 const utils = require('util')
+const mqtt = require('mqtt')
+const uuid = require('uuid')
+const EventEmitter = require('events')
+
 const { parsePayload } = require('./utils')
 const options = {
   name: 'untitled',
@@ -44,7 +45,7 @@ class PlatziverseAgent extends EventEmitter {
       this._client.subscribe('agent/connected')
       this._client.subscribe('agent/disconnected')
 
-      this._client.on('connected', () => {
+      this._client.on('connect', () => {
         this._agentId = uuid.v4()
 
         this.emit('connected', this._agentId)
@@ -78,8 +79,6 @@ class PlatziverseAgent extends EventEmitter {
             this._client.publish('agent/message', JSON.stringify(message))
             this.emit('message', message)
           }
-
-          this.emit('agent/message', 'this is a message')
         }, opts.interval)
       })
 
@@ -109,7 +108,6 @@ class PlatziverseAgent extends EventEmitter {
       this._started = false
       this.emit('disconnected', this._agentId)
       this._client.end()
-
     }
   }
 }

@@ -1,15 +1,15 @@
-# platziverse-agent
-
-## Usage
-```js
-const PlatziverseAgent = require('platziverse-agent')
+'use strict'
+const PlatziverseAgent = require('../')
 
 const agent = new PlatziverseAgent({
-  name: 'myapp',
+  name: 'platzi',
   username: 'admin',
-  interval: 2000
+  interval: 2000,
+  mqtt: {
+    host: 'mqtt://localhost'
+  }
 })
-agent.connect()
+
 // Metrics
 agent.addMetric('rss', function getRss () {
   return process.memoryUsage().rss
@@ -23,6 +23,8 @@ agent.addMetric('callbackMetric', function getRandomCallback (callback) {
     callback(null, Math.random())
   }, 1000)
 })
+
+agent.connect()
 
 // This events are agent only
 agent.on('connected', handler)
@@ -39,6 +41,4 @@ function handler (payload) {
   console.log(payload)
 }
 
-
-setTimeout(() => agent.disconnect(), 2000)
-```
+setTimeout(() => agent.disconnect(), 10000)
