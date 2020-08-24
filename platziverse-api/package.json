@@ -1,0 +1,20 @@
+{
+  "name": "platziverse-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "DEBUG=production node server.js",
+    "start-dev": "DEBUG=platziverse:* nodemon server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  },
+  "dependencies": {
+    "debug": "^4.1.1",
+    "express": "^4.17.1"
+  }
+}
