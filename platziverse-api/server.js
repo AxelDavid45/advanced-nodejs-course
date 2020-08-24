@@ -13,6 +13,20 @@ app.use((err, req, res, next) => {
   res.status(err.statusCode).send(err.body)
 })
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
-})
+function handleFatalError (err) {
+  debug(`[fatal error] ${err.message}`)
+  console.error(err.stack)
+  process.exit(1)
+}
+
+// Verify if the module is required
+if (!module.parent) {
+  process.on('uncaughtException', handleFatalError)
+  process.on('unhandledRejection', handleFatalError)
+
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`)
+  })
+}
+
+module.exports = app
