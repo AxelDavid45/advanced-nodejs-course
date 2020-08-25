@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "blessed": "^0.1.81",
+    "blessed-contrib": "^4.8.20",
     "eslint-plugin-mocha": "^8.0.0"
   },
   "devDependencies": {
