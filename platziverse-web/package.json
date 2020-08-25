@@ -14,9 +14,10 @@
     "nodemon": "^2.0.4"
   },
   "dependencies": {
+    "axios": "^0.20.0",
     "debug": "^4.1.1",
     "express": "^4.17.1",
-    "socket.io": "^2.3.0",
-    "platziverse-agent": "file:../platziverse-agent"
+    "platziverse-agent": "file:../platziverse-agent",
+    "socket.io": "^2.3.0"
   }
 }

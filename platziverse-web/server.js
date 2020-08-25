@@ -9,9 +9,11 @@ const socketIo = require('socket.io')
 const PlatziverseAgent = require('platziverse-agent')
 const PORT = process.env.PORT || 8080
 const io = socketIo(server)
-app.use(express.static(`${__dirname}/public`))
 const agent = new PlatziverseAgent()
+const api = require('./proxy')
 
+app.use(express.static(`${__dirname}/public`))
+app.use('/', api)
 // Socket io
 io.on('connection', socket => {
   debug(`Client ${socket.id} connected`)
