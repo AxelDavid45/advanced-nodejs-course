@@ -18,7 +18,6 @@ api.use(async (req, res, next) => {
       services = await db(config)
       Agent = services.Agent
       Metric = services.Metric
-      next()
     } catch (e) {
       return next(e)
     }
@@ -26,27 +25,62 @@ api.use(async (req, res, next) => {
   next()
 })
 
-api.get('/agents', (req, res, next) => {
+api.get('/agents', async (req, res, next) => {
+  debug('Request to /agents')
+  let agents = []
   try {
-    debug('Request to /agents')
-    res.send({})
+    agents = await Agent.findConnected()
+  } catch (e) {
+    next(e)
+  }
+  res.send(agents)
+})
+
+api.get('/agent/:uuid', async (req, res, next) => {
+  debug('Request to /agent/:uuid')
+  let agent = null
+  try {
+    const { uuid } = req.params
+    agent = await Agent.findByUuid(uuid)
+    if (!agent) {
+      const error = errorResponse.notFoundError(`Agent not found with uuid ${uuid}`)
+      return next(error)
+    }
+    res.send(agent)
   } catch (e) {
     next(e)
   }
 })
 
-api.get('/agent/:uuid', (req, res, next) => {
-  const { uuid } = req.params
-  if (uuid !== 'yyy') {
-    const error = errorResponse.notFoundError('Agent not found')
-    return next(error)
-  }
-  res.send({ uuid })
-})
-
-api.get('/metrics/:uuid', (req, res) => {
+api.get('/metrics/:uuid', async (req, res, next) => {
   const { uuid, type } = req.params
-  res.send({ uuid, type })
+  debug(`request to /metrics/${uuid}`)
+  let metrics = []
+  try {
+    metrics = await Metric.findByAgentUuid(uuid)
+  } catch (e) {
+    next(e)
+  }
+
+  if (metrics.length === 0) {
+    return next(errorResponse.notFoundError(`Metrics not found for agent with uuid ${uuid}`))
+  }
+
+  res.send(metrics)
 })
 
+api.get('/metrics/:uuid/:type', async (req, res, next) =>{
+  const { uuid, type } = req.params
+  debug(`request to /metrics/${uuid}/${type}`)
+  let metrics = []
+  try {
+    metrics = await Metric.findByTypeAgentUuid(type, uuid)
+  } catch (e) {
+    next(e)
+  }
+  if (metrics.length === 0) {
+    return next(errorResponse.notFoundError(`Metrics not found for agent with uuid ${uuid}`))
+  }
+  res.send(metrics)
+})
 module.exports = api
