@@ -53,3 +53,10 @@ describe('Testing API', function () {
     expect(JSON.stringify(response.body)).equal(expected)
   })
 })
+
+// TODO test for /api/agent/:uuid
+// TODO test for /api/agent/:uuid - not found
+// TODO test for /api/metrics/:uuid
+// TODO test for /api/metrics/:uuid - not found
+// TODO test for /api/metrics/:uuid/:type
+// TODO test for /api/metrics/:uuid/:type - not found
