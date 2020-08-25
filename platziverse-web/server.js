@@ -1,27 +1,26 @@
 'use strict'
 const express = require('express')
 const app = express()
+const { pipe } = require('./utils')
 const http = require('http')
 const server = http.createServer(app)
 const debug = require('debug')('platziverse:web')
 const socketIo = require('socket.io')
+const PlatziverseAgent = require('platziverse-agent')
 const PORT = process.env.PORT || 8080
 const io = socketIo(server)
 app.use(express.static(`${__dirname}/public`))
+const agent = new PlatziverseAgent()
 
 // Socket io
-io.on('connect', socket => {
+io.on('connection', socket => {
   debug(`Client ${socket.id} connected`)
-
-  socket.on('agent/message', payload => {
-    console.log(payload)
-  })
-
-  setInterval(() => io.emit('agent/message', { agent: 'xxx-yyy' }), 5000)
+  pipe(agent, socket)
 })
 
 server.listen(PORT, () => {
   console.log(`platziverse-web running on port ${PORT}`)
+  agent.connect()
 })
 
 function handleFatalError (err) {

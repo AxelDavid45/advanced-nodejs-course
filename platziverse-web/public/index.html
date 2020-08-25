@@ -12,12 +12,14 @@
 <script>
     const socket = io()
     socket.on('agent/message', payload => {
-      console.log(payload)
+      console.log('agent/message', payload)
     })
-
-    setInterval(() => {
-      socket.emit('agent/message', 'hello server')
-    } ,5000)
+    socket.on('agent/connected', payload => {
+      console.log('agent/connected', payload)
+    })
+    socket.on('agent/disconnected', payload => {
+      console.log('agent/disconnected',payload)
+    })
 </script>
 </body>
 </html>
