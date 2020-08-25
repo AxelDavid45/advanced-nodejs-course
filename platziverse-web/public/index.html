@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Platziverse</title>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+<h1>Platziverse</h1>
+
+
+<script>
+    const socket = io()
+    socket.on('agent/message', payload => {
+      console.log(payload)
+    })
+
+    setInterval(() => {
+      socket.emit('agent/message', 'hello server')
+    } ,5000)
+</script>
+</body>
+</html>
