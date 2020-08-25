@@ -2,6 +2,8 @@
 const debug = require('debug')('platziverse:routes:api')
 const errorResponse = require('./utils/error-response')
 const config = require('../config/index')(false, debug)
+const auth = require('express-jwt')
+const guard = require('express-jwt-permissions')()
 const express = require('express')
 const db = require('platziverse-db')
 const api = express.Router()
@@ -25,11 +27,19 @@ api.use(async (req, res, next) => {
   next()
 })
 
-api.get('/agents', async (req, res, next) => {
+api.get('/agents', auth(config.auth), async (req, res, next) => {
   debug('Request to /agents')
+  const { user } = req
   let agents = []
   try {
-    agents = await Agent.findConnected()
+    if (!user || !user.username) {
+      throw errorResponse.unauthorizedError('Unauthorized request')
+    }
+    if (user.admin) {
+      agents = await Agent.findConnected()
+    } else {
+      agents = await Agent.findByUsername(user.username)
+    }
   } catch (e) {
     next(e)
   }
@@ -52,8 +62,8 @@ api.get('/agent/:uuid', async (req, res, next) => {
   }
 })
 
-api.get('/metrics/:uuid', async (req, res, next) => {
-  const { uuid, type } = req.params
+api.get('/metrics/:uuid', auth(config.auth), guard.check(['metrics:read']), async (req, res, next) => {
+  const { uuid } = req.params
   debug(`request to /metrics/${uuid}`)
   let metrics = []
   try {
@@ -69,7 +79,7 @@ api.get('/metrics/:uuid', async (req, res, next) => {
   res.send(metrics)
 })
 
-api.get('/metrics/:uuid/:type', async (req, res, next) =>{
+api.get('/metrics/:uuid/:type', async (req, res, next) => {
   const { uuid, type } = req.params
   debug(`request to /metrics/${uuid}/${type}`)
   let metrics = []

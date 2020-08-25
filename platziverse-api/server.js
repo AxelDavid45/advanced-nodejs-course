@@ -1,6 +1,7 @@
 'use strict'
 const debug = require('debug')('platziverse:api')
 const express = require('express')
+const error = require('./utils/error-response')
 const PORT = process.env.PORT || 3000
 const app = express()
 const api = require('./api')
@@ -10,6 +11,9 @@ app.use('/api', api)
 // Express error handler
 app.use((err, req, res, next) => {
   debug(`Error: ${err.message}`)
+  if (err.name === 'UnauthorizedError') {
+    err = error.unauthorizedError(err.message)
+  }
   res.status(err.statusCode).send(err.body)
 })
 

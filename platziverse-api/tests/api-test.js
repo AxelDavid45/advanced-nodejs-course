@@ -3,17 +3,21 @@
 const request = require('supertest')
 const agentFixtures = require('./fixtures/agent')
 const sinon = require('sinon')
+const authUtil = require('../auth')
+const debug = require('debug')
+const config = require('../../config')(false, debug)
 const proxyquire = require('proxyquire').noPreserveCache()
 const expect = require('chai').expect
 // Globals
 let sandbox = null
 let apiStub = null
+let token = null
 let server = null
 let dbStub = null
 const AgentStub = {}
 const MetricStub = {}
 
-beforeEach(function () {
+beforeEach(async function () {
   sandbox = sinon.createSandbox()
   dbStub = sandbox.stub()
   dbStub.resolves({
@@ -31,6 +35,7 @@ beforeEach(function () {
   server = proxyquire('../server', {
     './api': apiStub
   })
+  token = await authUtil.sign({ admin: true, username: 'platzi' }, config.auth.secret)
 })
 
 afterEach(function () {
@@ -39,7 +44,9 @@ afterEach(function () {
 
 describe('Testing API', function () {
   it('API should response with 200 and JSON content', async function () {
-    const response = await request(server).get('/api/agents')
+    const response = await request(server)
+      .get('/api/agents')
+      .set('Authorization', `Bearer ${token}`)
     expect(response.statusCode)
       .equal(200, 'Should response with 200')
     expect(response.headers['content-type'])
@@ -54,6 +61,7 @@ describe('Testing API', function () {
   })
 })
 
+// TODO test for /api/agent/ - not authorized
 // TODO test for /api/agent/:uuid
 // TODO test for /api/agent/:uuid - not found
 // TODO test for /api/metrics/:uuid
